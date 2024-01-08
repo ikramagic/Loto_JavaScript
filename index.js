@@ -37,10 +37,18 @@ const validateForm = () => {
     const firstname = getValueById("firstname");
     const lastname = getValueById("lastname");
     const email = getValueById("email");
-
+  
     const resultMessage = checkLoto(firstname, lastname, email, selectedNumbers);
     setValueById("result", resultMessage);
-};
+  
+    if (resultMessage.includes("Félicitations")) {
+      showWinGif();
+    } else {
+      showLoseGif();
+    }
+  };
+  
+  
 
 const generateNumberButtons = () => {
     const buttonGroup = document.getElementById("numberButtons");
