@@ -1,34 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Appelle la fonction pour générer les boutons lors du chargement de la page
     generateNumberButtons();
 });
 
+const selectedNumbers = new Set();
+
 const checkLoto = (firstname, lastname, email, selectedNumbers) => {
-    // Vérification du prénom
     if (!firstname.trim()) {
         return "Veuillez fournir un prénom.";
     }
 
-    // Vérification du nom
     if (!lastname.trim()) {
         return "Veuillez fournir un nom.";
     }
 
-    // Vérification de l'email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,3}$/;
     if (!emailRegex.test(email)) {
         return "Votre email n'est pas valide.";
     }
 
-    // Vérification des nombres Loto
     if (selectedNumbers.size !== 6) {
         return "Veuillez sélectionner 6 nombres.";
     }
 
-    // Simulation des nombres gagnants
     const winningNumbers = generateRandomNumbers();
 
-    // Vérification si le joueur a gagné
     if (arraysEqual(Array.from(selectedNumbers), winningNumbers)) {
         return "Félicitations, vous avez gagné 1 million!!!!";
     } else {
@@ -47,42 +42,130 @@ const validateForm = () => {
 
 const generateNumberButtons = () => {
     const buttonGroup = document.getElementById('numberButtons');
-    
-    const row = document.createElement('div');
-    row.className = 'row';
+
+    const buttonsArray = [];
 
     for (let i = 1; i <= 49; i++) {
         const col = document.createElement('div');
-        col.className = 'col-2'; // Choisir la largeur en fonction de l'écran
+        col.className = 'col-2'; 
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = 'btn btn-secondary btn-block mb-2'; // Ajout de la classe 'btn-block' pour occuper la largeur du parent
-        button.dataset.toggle = 'button';
-        button.innerHTML = i;
+        button.id = `button-${i}`;
+        button.className = 'btn btn-secondary btn-block mb-2'; 
+
+        const displayNumber = i < 10 ? `0${i}` : `${i}`;
+
+        button.innerText = displayNumber;
         button.addEventListener('click', () => toggleNumber(i));
-        
+
         col.appendChild(button);
-        row.appendChild(col);
+        buttonsArray.push(col); 
     }
 
+    shuffle(buttonsArray);
+
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    buttonsArray.forEach(buttonCol => {
+        row.appendChild(buttonCol);
+    });
+
     buttonGroup.appendChild(row);
+
+    const resetButton = document.createElement('button');
+    resetButton.type = 'button';
+    resetButton.className = 'btn btn-danger btn-block mt-2';
+
+    resetButton.insertAdjacentHTML('beforeend', '<i class="bi bi-backspace-fill"></i>');
+
+    resetButton.addEventListener('click', resetGrid);
+
+    buttonGroup.appendChild(resetButton);
+
+    const shuffleButton = document.createElement('button');
+    shuffleButton.type = 'button';
+    shuffleButton.className = 'btn btn-info btn-block mt-2';
+    shuffleButton.innerHTML = '<i class="bi bi-shuffle"></i>';
+    shuffleButton.addEventListener('click', shuffleGrid);
+
+    buttonGroup.appendChild(shuffleButton);
+};
+
+const shuffle = (array) => {
+    let currentIndex = array.length, randomIndex;
+
+    while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
 };
 
 const toggleNumber = (number) => {
+    const button = document.getElementById(`button-${number}`);
+
     if (selectedNumbers.has(number)) {
         selectedNumbers.delete(number);
+        button.classList.remove('btn-primary'); 
+        button.classList.add('btn-secondary');
     } else {
-        selectedNumbers.add(number);
+        if (selectedNumbers.size < 6) {
+            selectedNumbers.add(number);
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-primary');
+        }
     }
 
-    // Met à jour le champ de saisie avec les numéros sélectionnés
     setValueById('lotoNumbers', Array.from(selectedNumbers).join(','));
 };
+
+const resetGrid = () => {
+    selectedNumbers.clear();
+
+    for (let i = 1; i <= 49; i++) {
+        const button = document.getElementById(`button-${i}`);
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-secondary');
+    }
+
+    setValueById('lotoNumbers', '');
+};
+
+const shuffleGrid = () => {
+    const buttonGroup = document.getElementById('numberButtons');
+    const buttonsArray = [];
+
+    for (let i = 1; i <= 49; i++) {
+        const button = document.getElementById(`button-${i}`);
+        buttonsArray.push(button);
+    }
+
+    shuffle(buttonsArray);
+
+    buttonsArray.forEach((button, index) => {
+        const number = index + 1;
+        const displayNumber = number < 10 ? `0${number}` : `${number}`;
+        button.innerText = displayNumber;
+
+        if (selectedNumbers.has(number)) {
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-primary');
+        } else {
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-secondary');
+        }
+    });
+};
+
 
 const generateRandomNumbers = () => {
     const numbers = [];
     while (numbers.length < 6) {
-        const randomNum = Math.floor(Math.random() * 49) + 1; // Génération d'un nombre entre 1 et 49
+        const randomNum = Math.floor(Math.random() * 49) + 1;
         if (!numbers.includes(randomNum)) {
             numbers.push(randomNum);
         }
@@ -94,6 +177,5 @@ const arraysEqual = (arr1, arr2) => {
     return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 };
 
-// Fonctions utilitaires pour manipuler les éléments DOM
 const getValueById = (id) => document.getElementById(id).value;
 const setValueById = (id, value) => document.getElementById(id).innerText = value;
