@@ -18,7 +18,7 @@
 
 We are a team dedicated to creating engaging web applications. Our goal is to bring excitement and entertainment to users through innovative and interactive experiences.
 
-![Who We Are](image-1.png)
+![Who We Are](back_end_front_end.gif)
 
 ## Powered By
 
