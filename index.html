@@ -1,49 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <title>Loto Game</title>
-</head>
-<body class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form id="lotoForm">
-                <div class="mb-3">
-                    <label for="firstname" class="form-label">Prénom:</label>
-                    <input type="text" class="form-control" id="firstname" required>
-                </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+    body {
+        min-height: 100vh;
+        margin-bottom: 60px;
+    }
 
-                <div class="mb-3">
-                    <label for="lastname" class="form-label">Nom:</label>
-                    <input type="text" class="form-control" id="lastname" required>
-                </div>
+    body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 0, 31, 0.6) 0%, rgba(0, 0, 31, 0.9) 100%);
+        pointer-events: none; 
+        z-index: -1;
+    }
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
+    .jumbotron {
+        position: relative;
+        padding: 2rem;
+        margin-bottom: 0;
+        background: url("pexels-cottonbro-studio-5909787-removebg-preview.png") center/cover no-repeat;
+        color: white;
+        height: 100vh;
+        margin-bottom: 0;
+    }
 
-                <div class="mb-3">
-                    <label for="lotoNumbers" class="form-label">Votre grille de jeu :</label>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="btn-group" id="numberButtons" role="group" aria-label="Number Buttons"></div>
-                        </div>
-                    </div>
-                </div>
+      .jumbotron::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.6) 0%,
+          rgba(0, 0, 0, 0.3) 70%,
+          rgba(0, 0, 0, 0) 100%
+        );
+      }
 
-                <button type="button" class="btn btn-success" onclick="validateForm()">Valider ma grille <i class="bi bi-check2-all"></i></button>
-                <div id="shuffleResetButtons" class="mt-2"></div>
-                <div id="result" class="mt-3"></div>            
-            </form>
+      .footer {
+        background: #001f3f;
+        color: white;
+        padding: 10px;
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+      }
 
-            <div id="result" class="mt-3"></div>
-        </div>
+      .mb-3 {
+        margin-bottom: 1rem;
+      }
+
+      @keyframes dance {
+        0% {
+          transform: translate(0, 0);
+        }
+        25% {
+          transform: translate(52px, 15px);
+        }
+        50% {
+          transform: translate(0, 0);
+        }
+        75% {
+          transform: translate(-79px, -222px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+
+      .animated-background {
+        animation: dance 10000000000s infinite; 
+      }
+
+      .custom-card {
+    background-color: transparent; 
+    border: 1px solid rgba(0, 0, 0, 0.125); 
+    border-radius: 0.25rem; 
+  }
+    </style>
+  </head>
+  <body class="container mt-3 d-flex flex-column">
+    <div class="row">
+      <div class="col-md-6 col-lg-3 mx-auto mt-5 mb-5 text-center img-fluid">
+        <img
+          src="pexels-cottonbro-studio-5909787-removebg-preview.png"
+          alt="Image"
+          class="img-fluid"
+        />
+        <p class="lead">Jouez et tentez de gagner 1 million de regrets !</p>
+        <hr class="my-4" />
+        <p>
+          Remplissez votre grille de jeu ci-dessous et appuyez sur "Valider ma
+          grille".
+        </p>
+        <img src="Logo_Millionnaire.png" alt="Image" class="img-fluid" />
+      </div>
+
+      <div class="col-md-6">
+        <form id="lotoForm">
+          <div class="mb-3">
+            <label for="firstname" class="form-label">Prénom:</label>
+            <input type="text" class="form-control custom-card" id="firstname" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="lastname custom-card" class="form-label">Nom:</label>
+            <input type="text" class="form-control custom-card" id="lastname" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="email custom-card" class="form-label">Email:</label>
+            <input type="email" class="form-control" id="email" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="lotoNumbers" class="form-label"
+              >Votre grille de jeu :</label
+            >
+            <div class="card">
+              <div class="card-body">
+                <div
+                  class="btn-group"
+                  id="numberButtons"
+                  role="group"
+                  aria-label="Number Buttons"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-success"
+            onclick="validateForm()"
+          >
+            Valider ma grille <i class="bi bi-check2-all"></i>
+          </button>
+          <div id="shuffleResetButtons" class="mt-2"></div>
+          <div id="result" class="mt-3"></div>
+        </form>
+
+        <div id="result" class="mt-3"></div>
+      </div>
     </div>
 
+    <footer>
+      <p>&copy; 2024, LowTow. Tous droits réservés.</p>
+    </footer>
+
     <script src="index.js"></script>
-</body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
